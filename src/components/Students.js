@@ -9,11 +9,12 @@ const Students = () => {
 
   return (
     <div>
-      <h1>Students List</h1>
-      <ul>
-        {students.map(student => (
-          <li key={student.id}>
-            {student.name}, Age: {student.age}
+      <h2 className="text-2xl font-semibold text-blue-500 mb-4">Students List</h2>
+      <ul className="space-y-4">
+        {students.map((student) => (
+          <li key={student.id} className="bg-blue-100 p-4 rounded-lg shadow-md flex justify-between items-center">
+            <span className="font-medium text-blue-700">{student.name}</span>
+            <span className="text-blue-600">Age: {student.age}</span>
           </li>
         ))}
       </ul>
