@@ -11,6 +11,9 @@ const StudentForm = () => {
     image: null,
   });
 
+  // State to handle submission status
+  const [status, setStatus] = useState('');
+
   // Handle form field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +32,7 @@ const StudentForm = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Create a FormData object to send data including the image
@@ -41,18 +44,33 @@ const StudentForm = () => {
     data.append('formBay', formData.formBay);
     data.append('image', formData.image);
 
-    // Submit the form data
-    console.log('Form submitted:', formData);
-    // Here you can make an API call to send the data to your backend
+    try {
+      // Make a POST request using fetch
+      const response = await fetch('http://localhost:4000/api/register', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setStatus('Success! Student information submitted.');
+        console.log('Response from API:', result);
+      } else {
+        setStatus('Failed to submit student information.');
+        console.error('Error in API response:', response.statusText);
+      }
+    } catch (error) {
+      setStatus('An error occurred. Please try again later.');
+      console.error('Fetch error:', error);
+    }
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-center text-blue-600 mb-6">Student Registration Form</h2>
-      
+    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">Student Registration Form</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="name">Name:</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
           <input
             type="text"
             id="name"
@@ -60,12 +78,12 @@ const StudentForm = () => {
             value={formData.name}
             onChange={handleInputChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="fatherName">Father Name:</label>
+          <label htmlFor="fatherName" className="block text-sm font-medium text-gray-700">Father Name</label>
           <input
             type="text"
             id="fatherName"
@@ -73,12 +91,12 @@ const StudentForm = () => {
             value={formData.fatherName}
             onChange={handleInputChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="rollNumber">Roll Number:</label>
+          <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700">Roll Number</label>
           <input
             type="text"
             id="rollNumber"
@@ -86,12 +104,12 @@ const StudentForm = () => {
             value={formData.rollNumber}
             onChange={handleInputChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="grade">Grade:</label>
+          <label htmlFor="grade" className="block text-sm font-medium text-gray-700">Grade</label>
           <input
             type="text"
             id="grade"
@@ -99,12 +117,12 @@ const StudentForm = () => {
             value={formData.grade}
             onChange={handleInputChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="formBay">Form Bay:</label>
+          <label htmlFor="formBay" className="block text-sm font-medium text-gray-700">Form Bay</label>
           <input
             type="text"
             id="formBay"
@@ -112,29 +130,30 @@ const StudentForm = () => {
             value={formData.formBay}
             onChange={handleInputChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="image">Image:</label>
+          <label htmlFor="image" className="block text-sm font-medium text-gray-700">Upload Image</label>
           <input
             type="file"
             id="image"
             name="image"
-            onChange={handleImageChange}
             accept="image/*"
-            required
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            onChange={handleImageChange}
+            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
+          className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Submit
         </button>
+
+        {status && <p className="mt-4 text-center text-red-500">{status}</p>}
       </form>
     </div>
   );
