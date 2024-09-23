@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const StudentForm = () => {
-  // State for form values
   const [formData, setFormData] = useState({
     name: '',
     fatherName: '',
@@ -11,10 +10,8 @@ const StudentForm = () => {
     image: null,
   });
 
-  // State to handle submission status
   const [status, setStatus] = useState('');
 
-  // Handle form field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,7 +20,6 @@ const StudentForm = () => {
     });
   };
 
-  // Handle image upload
   const handleImageChange = (e) => {
     setFormData({
       ...formData,
@@ -31,11 +27,9 @@ const StudentForm = () => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create a FormData object to send data including the image
     const data = new FormData();
     data.append('name', formData.name);
     data.append('fatherName', formData.fatherName);
@@ -45,7 +39,6 @@ const StudentForm = () => {
     data.append('image', formData.image);
 
     try {
-      // Make a POST request using fetch
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
         body: data,
