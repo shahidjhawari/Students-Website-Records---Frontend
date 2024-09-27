@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 const StudentForm = () => {
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
+    password: '',
     fatherName: '',
     rollNumber: '',
     grade: '',
@@ -32,6 +34,8 @@ const StudentForm = () => {
 
     const data = new FormData();
     data.append('name', formData.name);
+    data.append('email', formData.email);
+    data.append('password', formData.password);
     data.append('fatherName', formData.fatherName);
     data.append('rollNumber', formData.rollNumber);
     data.append('grade', formData.grade);
@@ -69,6 +73,32 @@ const StudentForm = () => {
             id="name"
             name="name"
             value={formData.name}
+            onChange={handleInputChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            type="text"
+            id="password"
+            name="password"
+            value={formData.password}
             onChange={handleInputChange}
             required
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"

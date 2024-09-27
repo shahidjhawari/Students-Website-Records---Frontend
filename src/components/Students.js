@@ -40,6 +40,7 @@ const Students = () => {
             />
             <div className="flex-1">
               <h3 className="font-medium text-blue-700">{student.name}</h3>
+              <h3 className="font-medium text-blue-700">{student.email}</h3>
               <p className="text-sm text-blue-600">
                 Father's Name: {student.fatherName}
               </p>
