@@ -20,11 +20,11 @@ const UpdateStudents = () => {
         const response = await fetch(`http://localhost:4000/api/get/${userId}`);
         const user = await response.json();
 
-        console.log('Fetched user data:', user); // Log the user data
+        console.log('Fetched user data:', user); 
 
         if (response.ok) {
           setFormData({
-            name: user.getUser.name || '',   // Ensure correct path based on your response structure
+            name: user.getUser.name || '',   
             fatherName: user.getUser.fatherName || '',
             rollNumber: user.getUser.rollNumber || '',
             grade: user.getUser.grade || '',
@@ -36,7 +36,7 @@ const UpdateStudents = () => {
         }
       } catch (error) {
         setStatus('An error occurred while fetching user data.');
-        console.error('Fetch error:', error); // Log the error
+        console.error('Fetch error:', error); 
       }
     };
 
