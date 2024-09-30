@@ -5,13 +5,15 @@ import MainPage from "./components/MainPage";
 import RegisterUser from "./components/RegisterUser";
 import UpdateStudents from "./components/UpdateStudents";
 import DeleteUser from "./components/deleteUser";
+import Login from "./components/LoginUser";
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/mainpage" element={<MainPage />} />
           <Route path="/registeruser" element={<RegisterUser />} />
           <Route path="/updatestudents/:userId" element={<UpdateStudents />} />
           <Route path="/userdelete/:id" element={<DeleteUser />} />
