@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 
 const Students = () => {
-  const [student, setStudent] = useState(null); // Store single student
-  const [error, setError] = useState(null); // To handle any errors
-  const [loading, setLoading] = useState(true); // Loading state
+  const [student, setStudent] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+      const token = localStorage.getItem("token");
 
       if (!token) {
         setError("No authentication token found. Please log in.");
@@ -19,7 +19,7 @@ const Students = () => {
         const response = await fetch("http://localhost:4000/api/get", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`, // Add the token in the Authorization header
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -38,7 +38,6 @@ const Students = () => {
         const data = await response.json();
         console.log("Fetched data:", data);
 
-        // Expecting a single student object, so handle accordingly
         setStudent(data.getUser);
       } catch (error) {
         console.error("Error fetching student:", error);
@@ -71,8 +70,12 @@ const Students = () => {
           <div className="flex-1">
             <h3 className="font-medium text-blue-700">{student.name}</h3>
             <h3 className="font-medium text-blue-700">{student.email}</h3>
-            <p className="text-sm text-blue-600">Father's Name: {student.fatherName}</p>
-            <p className="text-sm text-blue-600">Roll Number: {student.rollNumber}</p>
+            <p className="text-sm text-blue-600">
+              Father's Name: {student.fatherName}
+            </p>
+            <p className="text-sm text-blue-600">
+              Roll Number: {student.rollNumber}
+            </p>
             <p className="text-sm text-blue-600">Grade: {student.grade}</p>
             <p className="text-sm text-blue-600">Form Bay: {student.formBay}</p>
           </div>
