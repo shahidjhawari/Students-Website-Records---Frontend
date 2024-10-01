@@ -1,188 +1,230 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
 
-const UpdateStudents = () => {
+const Students = () => {
+  const [student, setStudent] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    fatherName: '',
-    rollNumber: '',
-    grade: '',
-    formBay: '',
+    name: "",
+    email: "",
+    fatherName: "",
+    rollNumber: "",
+    grade: "",
+    formBay: "",
     image: null,
+    password: "", 
   });
 
-  const [status, setStatus] = useState('');
-  const { userId } = useParams();
-
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("No authentication token found. Please log in.");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(`http://localhost:4000/api/get/${userId}`);
-        const user = await response.json();
+        const response = await fetch("http://localhost:4000/api/get", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-        console.log('Fetched user data:', user); 
-
-        if (response.ok) {
-          setFormData({
-            name: user.getUser.name || '',   
-            fatherName: user.getUser.fatherName || '',
-            rollNumber: user.getUser.rollNumber || '',
-            grade: user.getUser.grade || '',
-            formBay: user.getUser.formBay || '',
-            image: null,
-          });
-        } else {
-          setStatus('Failed to load user data.');
+        if (!response.ok) {
+          const errorData = await response.json();
+          setError(errorData.message || "Failed to fetch student");
+          setLoading(false);
+          return;
         }
+
+        const data = await response.json();
+        setStudent(data.getUser);
+        setFormData({
+          name: data.getUser.name,
+          email: data.getUser.email,
+          fatherName: data.getUser.fatherName,
+          rollNumber: data.getUser.rollNumber,
+          grade: data.getUser.grade,
+          formBay: data.getUser.formBay,
+          image: data.getUser.image || null,
+          password: "", // Initialize password as an empty string
+        });
       } catch (error) {
-        setStatus('An error occurred while fetching user data.');
-        console.error('Fetch error:', error); 
+        console.error("Error fetching student:", error);
+        setError("Error fetching student");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUserData();
-  }, [userId]);
+    fetchData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      image: e.target.files[0],
-    }));
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleUpdate = async () => {
+    const token = localStorage.getItem("token");
 
-    const data = new FormData();
-    data.append('name', formData.name);
-    data.append('fatherName', formData.fatherName);
-    data.append('rollNumber', formData.rollNumber);
-    data.append('grade', formData.grade);
-    data.append('formBay', formData.formBay);
-    if (formData.image) {
-      data.append('image', formData.image);
+    if (!token) {
+      setError("No authentication token found. Please log in.");
+      return;
     }
 
+    const formDataToSubmit = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSubmit.append(key, formData[key]);
+    });
+
     try {
-      const response = await fetch(`http://localhost:4000/api/update/${userId}`, {
-        method: 'PUT',
-        body: data,
+      const response = await fetch("http://localhost:4000/api/update", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formDataToSubmit,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setStatus('Success! Student information updated.');
-        console.log('Response from API:', result);
-      } else {
-        setStatus('Failed to update student information.');
-        console.error('Error in API response:', response.statusText);
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to update student");
+        return;
       }
+
+      const updatedData = await response.json();
+      setStudent(updatedData.user);
+      setEditMode(false);
     } catch (error) {
-      setStatus('An error occurred. Please try again later.');
-      console.error('Fetch error:', error);
+      console.error("Error updating student:", error);
+      setError("Error updating student");
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Update Student Information</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+    <div>
+      <h2 className="text-2xl font-semibold text-blue-500 mb-4">
+        Student Information
+      </h2>
+
+      {loading ? (
+        <p className="text-blue-500">Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : student ? (
+        <div className="bg-blue-100 p-4 rounded-lg shadow-md flex items-center space-x-4">
+          <img
+            src={student.image || "default-image-url"}
+            alt={student.name}
+            className="w-16 h-16 rounded-full object-cover"
           />
+          {editMode ? (
+            <div className="flex-1">
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Name"
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Email"
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="fatherName"
+                value={formData.fatherName}
+                onChange={handleInputChange}
+                placeholder="Father's Name"
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="rollNumber"
+                value={formData.rollNumber}
+                onChange={handleInputChange}
+                placeholder="Roll Number"
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="grade"
+                value={formData.grade}
+                onChange={handleInputChange}
+                placeholder="Grade"
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="formBay"
+                value={formData.formBay}
+                onChange={handleInputChange}
+                placeholder="Form Bay"
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="New Password" // New field for password update
+                className="mb-2 p-2 border rounded"
+              />
+              <input
+                type="file"
+                name="image"
+                onChange={handleFileChange}
+                className="mb-2 p-2 border rounded"
+              />
+              <button
+                onClick={handleUpdate}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Update
+              </button>
+            </div>
+          ) : (
+            <div className="flex-1">
+              <h3 className="font-medium text-blue-700">{student.name}</h3>
+              <h3 className="font-medium text-blue-700">{student.email}</h3>
+              <p className="text-sm text-blue-600">
+                Father's Name: {student.fatherName}
+              </p>
+              <p className="text-sm text-blue-600">
+                Roll Number: {student.rollNumber}
+              </p>
+              <p className="text-sm text-blue-600">Grade: {student.grade}</p>
+              <p className="text-sm text-blue-600">Form Bay: {student.formBay}</p>
+            </div>
+          )}
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="ml-4 bg-yellow-500 text-white px-4 py-2 rounded"
+          >
+            {editMode ? "Cancel" : "Edit"}
+          </button>
         </div>
-
-        <div className="mb-4">
-          <label htmlFor="fatherName" className="block text-sm font-medium text-gray-700">Father Name</label>
-          <input
-            type="text"
-            id="fatherName"
-            name="fatherName"
-            value={formData.fatherName}
-            onChange={handleInputChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700">Roll Number</label>
-          <input
-            type="text"
-            id="rollNumber"
-            name="rollNumber"
-            value={formData.rollNumber}
-            onChange={handleInputChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="grade" className="block text-sm font-medium text-gray-700">Grade</label>
-          <input
-            type="text"
-            id="grade"
-            name="grade"
-            value={formData.grade}
-            onChange={handleInputChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="formBay" className="block text-sm font-medium text-gray-700">Form Bay</label>
-          <input
-            type="text"
-            id="formBay"
-            name="formBay"
-            value={formData.formBay}
-            onChange={handleInputChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">Upload New Image (Optional)</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Update
-        </button>
-
-        {status && <p className="mt-4 text-center text-red-500">{status}</p>}
-      </form>
+      ) : (
+        <p>No student data found</p>
+      )}
     </div>
   );
 };
 
-export default UpdateStudents;
+export default Students;

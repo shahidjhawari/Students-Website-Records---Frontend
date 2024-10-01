@@ -9,8 +9,8 @@ const MainPage = () => {
       <h1 className="text-4xl font-bold text-blue-600 mb-8 text-center">Welcome to the Student Records Page</h1>
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
         <Link className='w-full bg-blue-700 text-white py-1 px-5 rounded-lg hover:bg-blue-900 transition duration-2000' to={"/registeruser"}>Register User</Link>
-        <Link className='w-full bg-blue-700 text-white py-1 mx-2 px-5 rounded-lg hover:bg-blue-900 transition duration-2000' to={"/updatestudents/66f5589f89a170c9ec4c255b"}>Update User</Link>
-        <Link className='w-full bg-blue-700 text-white py-1 mx-2 px-5 rounded-lg hover:bg-blue-900 transition duration-2000' to={"/userdelete/66f5589f89a170c9ec4c255b"}>Delete User</Link>
+        <Link className='w-full bg-blue-700 text-white py-1 mx-2 px-5 rounded-lg hover:bg-blue-900 transition duration-2000' to={"/updatestudents"}>Update User</Link>
+        <Link className='w-full bg-blue-700 text-white py-1 mx-2 px-5 rounded-lg hover:bg-blue-900 transition duration-2000' to={"/userdelete"}>Delete User</Link>
         <Students />
       </div>
     </div>

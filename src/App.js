@@ -1,4 +1,3 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MainPage from "./components/MainPage";
@@ -15,8 +14,8 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/mainpage" element={<MainPage />} />
           <Route path="/registeruser" element={<RegisterUser />} />
-          <Route path="/updatestudents/:userId" element={<UpdateStudents />} />
-          <Route path="/userdelete/:id" element={<DeleteUser />} />
+          <Route path="/updatestudents" element={<UpdateStudents />} />
+          <Route path="/userdelete" element={<DeleteUser />} />
         </Routes>
       </div>
     </Router>
