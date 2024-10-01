@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const Students = () => {
-  const [students, setStudents] = useState([]);
+  const [student, setStudent] = useState(null); // Store single student
   const [error, setError] = useState(null); // To handle any errors
   const [loading, setLoading] = useState(true); // Loading state
 
@@ -24,13 +24,12 @@ const Students = () => {
           },
         });
 
-        // Check for response status
         if (!response.ok) {
           if (response.status === 401) {
             setError("Unauthorized access. Please log in again.");
           } else {
             const errorData = await response.json();
-            setError(errorData.message || "Failed to fetch students");
+            setError(errorData.message || "Failed to fetch student");
           }
           setLoading(false);
           return;
@@ -39,18 +38,13 @@ const Students = () => {
         const data = await response.json();
         console.log("Fetched data:", data);
 
-        // Ensure that data is in the expected format
-        if (Array.isArray(data.getUser)) {
-          setStudents(data.getUser);
-        } else {
-          console.error("Unexpected data format:", data);
-          setError("Unexpected data format received.");
-        }
+        // Expecting a single student object, so handle accordingly
+        setStudent(data.getUser);
       } catch (error) {
-        console.error("Error fetching students:", error);
-        setError("Error fetching students");
+        console.error("Error fetching student:", error);
+        setError("Error fetching student");
       } finally {
-        setLoading(false); // Always stop loading at the end
+        setLoading(false);
       }
     };
 
@@ -60,42 +54,31 @@ const Students = () => {
   return (
     <div>
       <h2 className="text-2xl font-semibold text-blue-500 mb-4">
-        Students List
+        Student Information
       </h2>
 
-      {loading ? ( // Show loading indicator
+      {loading ? (
         <p className="text-blue-500">Loading...</p>
-      ) : error ? ( // Show error if there's an error
+      ) : error ? (
         <p className="text-red-500">{error}</p>
+      ) : student ? (
+        <div className="bg-blue-100 p-4 rounded-lg shadow-md flex items-center space-x-4">
+          <img
+            src={student.image || "default-image-url"} // Use default image if none provided
+            alt={student.name}
+            className="w-16 h-16 rounded-full object-cover"
+          />
+          <div className="flex-1">
+            <h3 className="font-medium text-blue-700">{student.name}</h3>
+            <h3 className="font-medium text-blue-700">{student.email}</h3>
+            <p className="text-sm text-blue-600">Father's Name: {student.fatherName}</p>
+            <p className="text-sm text-blue-600">Roll Number: {student.rollNumber}</p>
+            <p className="text-sm text-blue-600">Grade: {student.grade}</p>
+            <p className="text-sm text-blue-600">Form Bay: {student.formBay}</p>
+          </div>
+        </div>
       ) : (
-        <ul className="space-y-4">
-          {students.map((student) => (
-            <li
-              key={student._id} // Use _id as the unique key for MongoDB
-              className="bg-blue-100 p-4 rounded-lg shadow-md flex items-center space-x-4"
-            >
-              <img
-                src={student.image || "default-image-url"} // Use default image if none provided
-                alt={student.name}
-                className="w-16 h-16 rounded-full object-cover"
-              />
-              <div className="flex-1">
-                <h3 className="font-medium text-blue-700">{student.name}</h3>
-                <h3 className="font-medium text-blue-700">{student.email}</h3>
-                <p className="text-sm text-blue-600">
-                  Father's Name: {student.fatherName}
-                </p>
-                <p className="text-sm text-blue-600">
-                  Roll Number: {student.rollNumber}
-                </p>
-                <p className="text-sm text-blue-600">Grade: {student.grade}</p>
-                <p className="text-sm text-blue-600">
-                  Form Bay: {student.formBay}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <p>No student data found</p>
       )}
     </div>
   );
