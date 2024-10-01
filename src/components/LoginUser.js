@@ -28,11 +28,13 @@ const Login = () => {
 
       if (response.ok) {
         console.log("Login successful!", data);
-        localStorage.setItem("token", data.token);
-        
+
+        // Store the token correctly in localStorage
+        localStorage.setItem("token", data.token); 
+
         // Check what is being stored in localStorage
         console.log("Token stored in localStorage:", localStorage.getItem("token"));
-        
+
         navigate("/mainpage"); // Navigate to main page on success
       } else {
         // Display the error message from the server if available
