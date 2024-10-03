@@ -5,6 +5,7 @@ import RegisterUser from "./components/RegisterUser";
 import UpdateStudents from "./components/UpdateStudents";
 import DeleteUser from "./components/deleteUser";
 import Login from "./components/LoginUser";
+import MyPanel from "./components/MyPanel";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/registeruser" element={<RegisterUser />} />
           <Route path="/updatestudents" element={<UpdateStudents />} />
           <Route path="/userdelete" element={<DeleteUser />} />
+          <Route path="/adminpage" element={<MyPanel />} />
         </Routes>
       </div>
     </Router>
