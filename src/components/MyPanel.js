@@ -8,4 +8,4 @@ function MyPanel() {
   )
 }
 
-export default MyPanel
+export default MyPanel;
