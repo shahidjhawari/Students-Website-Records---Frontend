@@ -7,7 +7,7 @@ function DeleteUser() {
   useEffect(() => {
     const deleteUser = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/delete/${id}`, {
+        const response = await fetch(`https://students-website-records-backend.vercel.app/api/delete/${id}`, {
           method: "DELETE",
         });
 

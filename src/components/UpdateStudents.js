@@ -27,7 +27,7 @@ const Students = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:4000/api/get", {
+        const response = await fetch("https://students-website-records-backend.vercel.app/api/get", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ const Students = () => {
     });
 
     try {
-      const response = await fetch("http://localhost:4000/api/update", {
+      const response = await fetch("https://students-website-records-backend.vercel.app/api/update", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

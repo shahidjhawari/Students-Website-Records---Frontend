@@ -43,7 +43,7 @@ const StudentForm = () => {
     data.append('image', formData.image);
 
     try {
-      const response = await fetch('http://localhost:4000/api/register', {
+      const response = await fetch('https://students-website-records-backend.vercel.app/api/register', {
         method: 'POST',
         body: data,
       });
